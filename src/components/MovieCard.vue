@@ -1,7 +1,7 @@
 <template>
     <div class="col-12 col-md-6 col-lg-4 col-xl-3">
         <div class="item-listing-container-skrn">
-            <a target="_blank" href="#!"><img :src="image" alt="Listing"/></a>
+            <a href="#!"><img :src="image" alt="Listing"/></a>
             <div class="item-listing-text-skrn">
                 <div class="item-listing-text-skrn-vertical-align">
                     <h6>

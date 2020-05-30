@@ -19,8 +19,8 @@
             <h4 class="heading-extra-margin-bottom">Drama</h4>
 
             <div class="row">
-                <Movie-Card
-                    v-for="(movie, index) in filteredMovies"
+                <MovieCard
+                    v-for="(movie, index) in movies"
                     :key="index"
                     :image="
                         movie.backdrop_path
@@ -49,113 +49,90 @@
 </template>
 
 <script>
-import bus from "../main";
-import axios from "axios";
-import paginate from "vuejs-paginate";
+    import bus from "../main";
+    import axios from "axios";
+    import paginate from "vuejs-paginate";
 
-import MovieCard from "@/components/MovieCard";
+    import MovieCard from "@/components/MovieCard";
 
-export default {
-    components: {
-        MovieCard,
-        paginate
-    },
-    data() {
-        return {
-            key: '2fcb73980db9cd248599953a2855498b',
-            movies: [],
-            genres: [],
-            searchInput: null,
-            page: {
-                ulClass: "page-numbers",
-                activePage: "current",
-                allPage: 0
-            }
-        };
-    },
-    methods: {
-        pagination(page) {
-            this.getList({ page });
+    export default {
+        components: {
+            MovieCard,
+            paginate
         },
-        getList(query = {}) {
-            return axios
-                .get(
-                    "https://api.themoviedb.org/3/discover/movie?api_key=" +
+        data() {
+            return {
+                key: '2fcb73980db9cd248599953a2855498b',
+                movies: [],
+                genres: [],
+                page: {
+                    ulClass: "page-numbers",
+                    activePage: "current",
+                    allPage: 0
+                }
+            };
+        },
+        methods: {
+            pagination(page) {
+                this.getList({page});
+            },
+            getList(query = {}) {
+                return axios
+                    .get(
+                        "https://api.themoviedb.org/3/discover/movie?api_key=" +
                         this.key +
                         "&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=" +
                         (query.page ? query.page : 1)
-                )
-                .then(res => {
-                    this.movies = res.data.results;
-                    this.page.allPage = res.data.total_pages;
-                });
-        },
+                    )
+                    .then(res => {
+                        this.movies = res.data.results;
+                        this.page.allPage = res.data.total_pages;
+                    });
+            },
 
-        getGenreList() {
-            return axios
-                .get(
-                    `https://api.themoviedb.org/3/genre/movie/list?api_key=${this.key}&language=en-US`
-                )
-                .then(res => {
-                    this.genres = res.data.genres;
-                });
-        },
-        // getGenre() {
-        //     bus.$on("genreId", data => {
-        //         console.log(data);
-        //         for (let i = 0; i < this.movies.length; i++) {
-        //             if (this.movies[i].genre_ids.includes(data)) {
-        //                 console.log(this.movies[i]);
-        //
-        //                 this.movies = this.movies[i];
-        //             }
-        //         }
-        //     });
-        // }
-    },
-    mounted() {
-        bus.$on('search', data => {
-            this.searchInput = data
-        });
-    },
-    computed: {
-        // filteredMovies(){
-        //     if(this.searchInput){
-        //         return this.movies.filter(movie => {
-        //             return movie.title.toLowerCase().includes(this.searchInput.toLowerCase())
-        //         })
-        //     } else {
-        //         return this.movies
-        //     }
-        //
-        // }
-        filteredMovies(){
-            if(this.searchInput){
+            getGenreList() {
                 return axios
                     .get(
-                        `https://api.themoviedb.org/3/search/movie?api_key=${this.key}&language=en-US&query=${this.searchInput}&page=1&include_adult=false`
-                    ).then(res => {
-                        console.log(res)
-                        this.movies = res.data.results;
-                        console.log(this.movies)
+                        `https://api.themoviedb.org/3/genre/movie/list?api_key=${this.key}&language=en-US`
+                    )
+                    .then(res => {
+                        this.genres = res.data.genres;
                     });
-            } else {
-                return this.movies
-            }
+            },
+            // getGenre(query = {}) {
+            //     bus.$on("genreId", data => {
+            //         axios(`https://api.themoviedb.org/3/discover/movie?api_key=${this.key}&with_genres=${data}&page=` + (query.page ? query.page : 1))
+            //         .then(res => {
+            //             this.movies = res.data.results
+            //         })
+            //     });
+            // }
+        },
+        mounted() {
+            bus.$on('search', data => {
+                if (data) {
+                    return axios(
+                        `https://api.themoviedb.org/3/search/movie?api_key=${this.key}&language=en-US&query=${data}&page=1&include_adult=false`
+                    ).then(res => {
+                        this.movies = res.data.results;
+                    }).catch(err => console.log(err))
 
+                } else if(data === '' || !data){
+                    this.getList()
+                }
+            });
+        },
+        created() {
+            this.getList();
+            this.getGenreList();
+            // this.getGenre();
         }
-    },
-    created() {
-        this.getList();
-        this.getGenreList();
-        // this.getGenre();
-    }
-};
+    };
 </script>
 
 <style scoped>
-.current a {
-    background-color: rgb(66, 183, 64) !important;
-    color: #fff !important;
-}
+    .current a {
+        background-color: rgb(66, 183, 64) !important;
+        color: #fff !important;
+    }
 </style>
