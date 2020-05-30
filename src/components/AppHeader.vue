@@ -2,10 +2,7 @@
     <header id="videohead-pro" class="sticky-header">
         <div id="video-logo-background">
             <a href="dashboard-home.html"
-                ><img
-                    src="../../static/images/logo-video-layout.png"
-                    alt="Logo"
-                />
+                ><h2 style="margin: 22px 20px">Moviex</h2>
             </a>
         </div>
 
@@ -16,12 +13,13 @@
                 alt=""
             />
             <input
+                v-model="search"
                 type="text"
                 placeholder="Search for Movies or TV Series"
                 aria-label="Search"
             />
             <div id="video-search-header-filtering">
-                <form id="video-search-header-filtering-padding">
+                 <form id="video-search-header-filtering-padding">
                     <div class="row">
                         <div class="col-sm extra-padding">
                             <h5>Type:</h5>
@@ -317,19 +315,24 @@ export default {
         return {
             genres: [],
             genre: null,
-            genreId: null
+            genreId: null,
+            search: '',
         };
     },
     methods: {
         select() {
-            let vm = this;
-            for (let i = 0; i < vm.genres.length; i++) {
-                if (vm.genre == vm.genres[i].name) {
-                    vm.genreId = vm.genres[i].id;
-                    bus.$emit("genreId", vm.genreId);
+            for (let i = 0; i < this.genres.length; i++) {
+                if (this.genre == this.genres[i].name) {
+                    this.genreId = this.genres[i].id;
+                    bus.$emit("genreId", this.genreId);
                 }
             }
         }
+    },
+    watch: {
+      'search': function (data) {
+          bus.$emit('search', data)
+      }
     },
     created() {
         let link;

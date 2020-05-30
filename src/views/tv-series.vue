@@ -107,7 +107,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .current a {
     background-color: rgb(66, 183, 64) !important;
     color: #fff !important;

@@ -20,7 +20,7 @@
 
             <div class="row">
                 <Movie-Card
-                    v-for="(movie, index) in movies"
+                    v-for="(movie, index) in filteredMovies"
                     :key="index"
                     :image="
                         movie.backdrop_path
@@ -62,8 +62,10 @@ export default {
     },
     data() {
         return {
+            key: '2fcb73980db9cd248599953a2855498b',
             movies: [],
             genres: [],
+            searchInput: null,
             page: {
                 ulClass: "page-numbers",
                 activePage: "current",
@@ -76,11 +78,10 @@ export default {
             this.getList({ page });
         },
         getList(query = {}) {
-            const key = "2fcb73980db9cd248599953a2855498b";
             return axios
                 .get(
                     "https://api.themoviedb.org/3/discover/movie?api_key=" +
-                        key +
+                        this.key +
                         "&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=" +
                         (query.page ? query.page : 1)
                 )
@@ -91,36 +92,68 @@ export default {
         },
 
         getGenreList() {
-            const key = "2fcb73980db9cd248599953a2855498b";
             return axios
                 .get(
-                    `https://api.themoviedb.org/3/genre/movie/list?api_key=${key}&language=en-US`
+                    `https://api.themoviedb.org/3/genre/movie/list?api_key=${this.key}&language=en-US`
                 )
                 .then(res => {
                     this.genres = res.data.genres;
                 });
         },
-        getGenre() {
-            bus.$on("genreId", data => {
-                for (let i = 0; i < this.movies.length; i++) {
-                    if (this.movies[i].genre_ids.includes(data)) {
-                        console.log(this.movies[i]);
+        // getGenre() {
+        //     bus.$on("genreId", data => {
+        //         console.log(data);
+        //         for (let i = 0; i < this.movies.length; i++) {
+        //             if (this.movies[i].genre_ids.includes(data)) {
+        //                 console.log(this.movies[i]);
+        //
+        //                 this.movies = this.movies[i];
+        //             }
+        //         }
+        //     });
+        // }
+    },
+    mounted() {
+        bus.$on('search', data => {
+            this.searchInput = data
+        });
+    },
+    computed: {
+        // filteredMovies(){
+        //     if(this.searchInput){
+        //         return this.movies.filter(movie => {
+        //             return movie.title.toLowerCase().includes(this.searchInput.toLowerCase())
+        //         })
+        //     } else {
+        //         return this.movies
+        //     }
+        //
+        // }
+        filteredMovies(){
+            if(this.searchInput){
+                return axios
+                    .get(
+                        `https://api.themoviedb.org/3/search/movie?api_key=${this.key}&language=en-US&query=${this.searchInput}&page=1&include_adult=false`
+                    ).then(res => {
+                        console.log(res)
+                        this.movies = res.data.results;
+                        console.log(this.movies)
+                    });
+            } else {
+                return this.movies
+            }
 
-                        this.movies = this.movies[i];
-                    }
-                }
-            });
         }
     },
     created() {
         this.getList();
-        this.getGenre();
         this.getGenreList();
+        // this.getGenre();
     }
 };
 </script>
 
-<style>
+<style scoped>
 .current a {
     background-color: rgb(66, 183, 64) !important;
     color: #fff !important;
