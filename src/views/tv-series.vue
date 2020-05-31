@@ -4,6 +4,7 @@
             <li v-for="(genre, index) in genres" :key="index">
                 <h6>{{ genre.name }}</h6>
                 <img
+                    @click="changeGenre(genre.id, genre.name)"
                     :src="
                         '../../static/images/genres/' +
                             genre.name.toLowerCase() +
@@ -16,10 +17,13 @@
         <div class="clearfix"></div>
 
         <div class="dashboard-container">
-            <h4 class="heading-extra-margin-bottom">Drama</h4>
+            <h4 class="heading-extra-margin-bottom">{{ genreName }}</h4>
 
             <div class="row">
-                <Movie-Card
+                <MovieCard
+                    @click.native="overviewMovie(movie)"
+                    v-for="(movie, index) in movies"
+                    :key="index"
                     :image="
                         movie.backdrop_path
                             ? 'https://image.tmdb.org/t/p/w500/' +
@@ -28,9 +32,9 @@
                     "
                     :name="movie.name"
                     :imdb="movie.vote_average"
-                    v-for="(movie, index) in movies"
-                    :key="index"
                 />
+
+                <!-- <h3 class="ml-3" v-if="cantFound">No results found for "{{ searchInput }}"</h3>-->
             </div>
 
             <paginate
@@ -49,67 +53,108 @@
 </template>
 
 <script>
-import bus from "../main";
-import axios from "axios";
-import paginate from "vuejs-paginate";
+    import bus from "../main";
+    import axios from "axios";
+    import paginate from "vuejs-paginate";
 
-import MovieCard from "@/components/MovieCard";
+    import MovieCard from "@/components/MovieCard";
 
-export default {
-    components: {
-        MovieCard,
-        paginate
-    },
-    data() {
-        return {
-            movies: [],
-            genres: [],
-            page: {
-                ulClass: "page-numbers",
-                activePage: "current",
-                allPage: 0
+    export default {
+        components: {
+            MovieCard,
+            paginate
+        },
+        data() {
+            return {
+                key: '2fcb73980db9cd248599953a2855498b',
+                movies: [],
+                genres: [],
+                withGenre: '',
+                genreName: 'Discover',
+                cantFound: false,
+                searchInput: null,
+                year: '',
+                page: {
+                    ulClass: "page-numbers",
+                    activePage: "current",
+                    allPage: 0
+                }
+            };
+        },
+        methods: {
+            pagination(page) {
+                this.getList({page});
+            },
+
+            getList(query = {}) {
+                return axios(`https://api.themoviedb.org/3/discover/tv?api_key=${this.key}&year=${this.year}&with_genres=${this.withGenre}&page=`
+                    + (query.page ? query.page : 1))
+                    .then(res => {
+                        this.movies = res.data.results
+                        this.page.allPage = res.data.total_pages;
+                    })
+            },
+
+            getGenreList() {
+                return axios
+                    .get(
+                        `https://api.themoviedb.org/3/genre/tv/list?api_key=${this.key}&language=en-US`
+                    )
+                    .then(res => {
+                        this.genres = res.data.genres;
+                    });
+            },
+
+            overviewMovie(data) {
+                console.log(data)
+                this.$router.push({name: 'Overview', params: {id: data.id}})
+            },
+
+            changeGenre(genreId, genreName) {
+                this.withGenre = genreId;
+                this.genreName = genreName;
+                this.getList()
             }
-        };
-    },
-    methods: {
-        pagination(page) {
-            this.getList({ page });
         },
-        getList(query = {}) {
-            const key = "2fcb73980db9cd248599953a2855498b";
-            return axios
-                .get(
-                    "https://api.themoviedb.org/3/discover/tv?api_key=" +
-                        key +
-                        "&language=en-US&sort_by=popularity.desc&page=1&timezone=America%2FNew_York&include_null_first_air_dates=false&page=" +
-                        (query.page ? query.page : 1)
-                )
-                .then(res => {
-                    this.movies = res.data.results;
-                    this.page.allPage = res.data.total_pages;
-                });
+        mounted() {
+
+            bus.$on("year", data => {
+                this.year = parseInt(data);
+                this.getList()
+            });
+
+            bus.$on("genreId", data => {
+                this.withGenre = data;
+                this.getList()
+            });
+            bus.$on('search', data => {
+                this.searchInput = data;
+                if (data) {
+                    return axios(
+                        `https://api.themoviedb.org/3/search/movie?api_key=${this.key}&language=en-US&query=${data}&page=1&include_adult=false`
+                    ).then(res => {
+                        if (!res.data.results.length) {
+                            return this.cantFound = true
+                        }
+                        this.movies = res.data.results;
+
+                    }).catch(err => console.log(err))
+
+                } else if (data === '' || !data) {
+                    this.getList()
+                }
+            });
         },
-        getGenreList() {
-            const key = "2fcb73980db9cd248599953a2855498b";
-            return axios
-                .get(
-                    `https://api.themoviedb.org/3/genre/tv/list?api_key=${key}&language=en-US`
-                )
-                .then(res => {
-                    this.genres = res.data.genres;
-                });
+        created() {
+            this.getList();
+            this.getGenreList();
         }
-    },
-    created() {
-        this.getList();
-        this.getGenreList();
-    }
-};
+    };
 </script>
 
 <style scoped>
-.current a {
-    background-color: rgb(66, 183, 64) !important;
-    color: #fff !important;
-}
+    .current a {
+        background-color: rgb(66, 183, 64) !important;
+        color: #fff !important;
+    }
 </style>

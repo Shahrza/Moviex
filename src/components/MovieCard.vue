@@ -1,11 +1,11 @@
 <template>
     <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-        <div class="item-listing-container-skrn">
-            <a href="#!"><img :src="image" alt="Listing"/></a>
+        <div class="item-listing-container-skrn card-hover">
+            <a><img :src="image" alt="Listing"/></a>
             <div class="item-listing-text-skrn">
                 <div class="item-listing-text-skrn-vertical-align">
                     <h6>
-                        <a href="#!" v-text="name"></a>
+                        <div href="#!" v-text="name"></div>
                     </h6>
                     <div
                         class="circle-rating-pro"
@@ -35,4 +35,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+    .card-hover:hover{
+        cursor: pointer;
+    }
+</style>

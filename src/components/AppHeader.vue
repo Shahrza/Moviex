@@ -1,17 +1,13 @@
 <template>
     <header id="videohead-pro" class="sticky-header">
         <div id="video-logo-background">
-            <a href="dashboard-home.html"
-                ><h2 style="margin: 22px 20px">Moviex</h2>
-            </a>
+            <router-link to="/" tag="a"
+            ><h2 style="margin: 22px 20px">Moviex</h2>
+            </router-link >
         </div>
 
         <div id="video-search-header">
-            <img
-                id="search-icon-more"
-                src="../../static/icons/fontawesome/webfonts/magnifying-glass.svg"
-                alt=""
-            />
+            <i id="search-icon-more" class="fas fa-filter"></i>
             <input
                 v-model="search"
                 type="text"
@@ -19,7 +15,7 @@
                 aria-label="Search"
             />
             <div id="video-search-header-filtering">
-                 <form id="video-search-header-filtering-padding">
+                <form id="video-search-header-filtering-padding">
                     <div class="row">
                         <div class="col-sm extra-padding">
                             <h5>Type:</h5>
@@ -27,7 +23,7 @@
                             <div class="row">
                                 <div class="col-sm">
                                     <label class="checkbox-pro-container"
-                                        >Movies
+                                    >Movies
                                         <input
                                             type="checkbox"
                                             checked="checked"
@@ -37,8 +33,8 @@
                                     </label>
 
                                     <label class="checkbox-pro-container"
-                                        >TV Series
-                                        <input type="checkbox" id="tv-type" />
+                                    >TV Series
+                                        <input type="checkbox" id="tv-type"/>
                                         <span class="checkmark-pro"></span>
                                     </label>
                                 </div>
@@ -63,58 +59,18 @@
                         </div>
                         <!-- close .col -->
                         <div class="col-sm extra-padding">
-                            <h5>Country:</h5>
-                            <select class="custom-select">
-                                <option selected>All Countries</option>
-                                <option value="1">Argentina</option>
-                                <option value="2">Australia</option>
-                                <option value="3">Bahamas</option>
-                                <option value="4">Belgium</option>
-                                <option value="5">Brazil</option>
-                                <option value="6">Canada</option>
-                                <option value="7">Chile</option>
-                                <option value="8">China</option>
-                                <option value="9">Denmark</option>
-                                <option value="10">Ecuador</option>
-                                <option value="11">France</option>
-                                <option value="12">Germany</option>
-                                <option value="13">Greece</option>
-                                <option value="14">Guatemala</option>
-                                <option value="15">Italy</option>
-                                <option value="16">Japan</option>
-                                <option value="17">asdfasdf</option>
-                                <option value="18">Korea</option>
-                                <option value="19">Malaysia</option>
-                                <option value="20">Monaco</option>
-                                <option value="21">Morocco</option>
-                                <option value="22">New Zealand</option>
-                                <option value="23">Panama</option>
-                                <option value="24">Portugal</option>
-                                <option value="25">Russia</option>
-                                <option value="26">United Kingdom</option>
-                                <option value="27">United States</option>
+                            <h5>Year:</h5>
+                            <select class="custom-select" v-model="year">
+                                <option v-for="year in 125" :value="year+1899">{{year+1899}}</option>
                             </select>
                             <div class="dotted-dividers-pro"></div>
-                        </div>
-                        <!-- close .col -->
-                        <div class="col-sm extra-padding extra-range-padding">
-                            <h5>Average Rating:</h5>
-                            <input
-                                class="range-example-rating-input"
-                                type="text"
-                                min="0"
-                                max="10"
-                                value="4,10"
-                                step="1"
-                            />
-                            <!-- JS is under /js/script.jss -->
                         </div>
                         <!-- close .col -->
                     </div>
                     <!-- close .row -->
                     <div id="video-search-header-buttons">
                         <a href="#" @click="select" class="btn btn-green-pro"
-                            >Filter Search</a
+                        >Filter Search</a
                         >
                         <a href="#!" class="btn">Reset</a>
                     </div>
@@ -144,29 +100,29 @@
                 <ul>
                     <li>
                         <a href="dashboard-profile.html"
-                            ><span class="icon-User"></span>My Profile</a
+                        ><span class="icon-User"></span>My Profile</a
                         >
                     </li>
                     <li>
                         <a href="dashboard-favorites.html"
-                            ><span class="icon-Favorite-Window"></span>My
+                        ><span class="icon-Favorite-Window"></span>My
                             Favorites</a
                         >
                     </li>
                     <li>
                         <a href="dashboard-account.html"
-                            ><span class="icon-Gears"></span>Account Details</a
+                        ><span class="icon-Gears"></span>Account Details</a
                         >
                     </li>
                     <li>
                         <a href="#!"
-                            ><span class="icon-Life-Safer"></span
-                            >Help/Support</a
+                        ><span class="icon-Life-Safer"></span
+                        >Help/Support</a
                         >
                     </li>
                     <li>
                         <a href="index.html"
-                            ><span class="icon-Power-3"></span>Log Out</a
+                        ><span class="icon-Power-3"></span>Log Out</a
                         >
                     </li>
                 </ul>
@@ -233,49 +189,59 @@
 </template>
 
 <script>
-import axios from "axios";
-import bus from "../main";
-export default {
-    name: "Header",
-    components: {},
-    data() {
-        return {
-            genres: [],
-            genre: null,
-            genreId: null,
-            search: '',
-        };
-    },
-    methods: {
-        select() {
-            for (let i = 0; i < this.genres.length; i++) {
-                if (this.genre == this.genres[i].name) {
-                    this.genreId = this.genres[i].id;
-                    bus.$emit("genreId", this.genreId);
+    import axios from "axios";
+    import bus from "../main";
+
+    export default {
+        name: "Header",
+        components: {
+        },
+        data() {
+            return {
+                key: '2fcb73980db9cd248599953a2855498b',
+                page: '',
+                genres: [],
+                genre: null,
+                genreId: null,
+                year: null,
+                search: '',
+            };
+        },
+        methods: {
+            select() {
+                for (let i = 0; i < this.genres.length; i++) {
+                    if (this.genre === this.genres[i].name) {
+                        this.genreId = this.genres[i].id;
+                        bus.$emit("genreId", this.genreId);
+                    }
                 }
+                bus.$emit("year", this.year);
+
+            },
+
+        },
+        watch: {
+            'search': (data) => {
+                bus.$emit('search', data)
+            },
+            '$route': (data) => {
+                this.page = data.path
             }
+        },
+        mounted() {
+            let link;
+            console.log(this.page)
+            if (this.page == "/tv-series") {
+                link = "https://api.themoviedb.org/3/genre/tv/list?api_key=";
+            } else if (this.page == "/") {
+                link = "https://api.themoviedb.org/3/genre/movie/list?api_key=";
+            }
+
+            return axios.get(link + this.key + "&language=en-US").then(res => {
+                this.genres = res.data.genres;
+            });
         }
-    },
-    watch: {
-      'search': function (data) {
-          bus.$emit('search', data)
-      }
-    },
-    created() {
-        let link;
-
-        // if (this.$route.path === "/tv-series") {
-        //     link = "https://api.themoviedb.org/3/genre/tv/list?api_key=";
-        // } else if (this.$route.path === "/") {
-            link = "https://api.themoviedb.org/3/genre/movie/list?api_key=";
-        // }
-
-        let key = "2fcb73980db9cd248599953a2855498b";
-        return axios.get(link + key + "&language=en-US").then(res => {
-            this.genres = res.data.genres;
-        });
-    }
-};
+    };
 </script>
 
 <style></style>

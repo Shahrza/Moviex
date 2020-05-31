@@ -4,6 +4,7 @@
             <li v-for="(genre, index) in genres" :key="index">
                 <h6>{{ genre.name }}</h6>
                 <img
+                    @click="changeGenre(genre.id, genre.name)"
                     :src="
                         '../../static/images/genres/' +
                             genre.name.toLowerCase() +
@@ -16,10 +17,11 @@
         <div class="clearfix"></div>
 
         <div class="dashboard-container">
-            <h4 class="heading-extra-margin-bottom">Drama</h4>
+            <h4 class="heading-extra-margin-bottom">{{ genreName }}</h4>
 
             <div class="row">
                 <MovieCard
+                    @click.native="overviewMovie(movie)"
                     v-for="(movie, index) in movies"
                     :key="index"
                     :image="
@@ -31,6 +33,8 @@
                     :name="movie.title"
                     :imdb="movie.vote_average"
                 />
+
+                <!-- <h3 class="ml-3" v-if="cantFound">No results found for "{{ searchInput }}"</h3>-->
             </div>
 
             <paginate
@@ -65,6 +69,11 @@
                 key: '2fcb73980db9cd248599953a2855498b',
                 movies: [],
                 genres: [],
+                withGenre: '',
+                genreName: 'Discover',
+                cantFound: false,
+                searchInput: null,
+                year: '',
                 page: {
                     ulClass: "page-numbers",
                     activePage: "current",
@@ -76,18 +85,14 @@
             pagination(page) {
                 this.getList({page});
             },
+
             getList(query = {}) {
-                return axios
-                    .get(
-                        "https://api.themoviedb.org/3/discover/movie?api_key=" +
-                        this.key +
-                        "&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=" +
-                        (query.page ? query.page : 1)
-                    )
+                return axios(`https://api.themoviedb.org/3/discover/movie?api_key=${this.key}&year=${this.year}&with_genres=${this.withGenre}&page=`
+                    + (query.page ? query.page : 1))
                     .then(res => {
-                        this.movies = res.data.results;
+                        this.movies = res.data.results
                         this.page.allPage = res.data.total_pages;
-                    });
+                    })
             },
 
             getGenreList() {
@@ -99,25 +104,42 @@
                         this.genres = res.data.genres;
                     });
             },
-            // getGenre(query = {}) {
-            //     bus.$on("genreId", data => {
-            //         axios(`https://api.themoviedb.org/3/discover/movie?api_key=${this.key}&with_genres=${data}&page=` + (query.page ? query.page : 1))
-            //         .then(res => {
-            //             this.movies = res.data.results
-            //         })
-            //     });
-            // }
+
+            overviewMovie(data) {
+                this.$router.push({name: 'Overview', params: {id: data.id}})
+            },
+
+            changeGenre(genreId, genreName) {
+                this.withGenre = genreId;
+                this.genreName = genreName;
+                this.getList()
+            }
         },
         mounted() {
+
+            bus.$on("year", data => {
+                this.year = parseInt(data);
+                this.getList()
+            });
+
+            bus.$on("genreId", data => {
+                this.withGenre = data;
+                this.getList()
+            });
             bus.$on('search', data => {
+                this.searchInput = data;
                 if (data) {
                     return axios(
                         `https://api.themoviedb.org/3/search/movie?api_key=${this.key}&language=en-US&query=${data}&page=1&include_adult=false`
                     ).then(res => {
+                        if (!res.data.results.length) {
+                            return this.cantFound = true
+                        }
                         this.movies = res.data.results;
+
                     }).catch(err => console.log(err))
 
-                } else if(data === '' || !data){
+                } else if (data === '' || !data) {
                     this.getList()
                 }
             });
@@ -125,7 +147,6 @@
         created() {
             this.getList();
             this.getGenreList();
-            // this.getGenre();
         }
     };
 </script>

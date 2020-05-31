@@ -13,6 +13,11 @@ export default new Router({
             path: "/tv-series",
             name: "Tv-Series",
             component: () => import("../views/tv-series")
+        },
+        {
+            path: "/overview",
+            name: "Overview",
+            component: () => import("../views/overview")
         }
     ]
 });
