@@ -1,9 +1,13 @@
 <template>
-    <div id="sidebar-bg">
-        <app-header />
-        <app-sidebar />
-        <router-view />
+    <div>
+        <div v-if="token" id="sidebar-bg">
+            <app-header />
+            <app-sidebar />
+            <router-view />
+        </div>
+        <router-view v-else></router-view>
     </div>
+
 </template>
 
 <script>
@@ -14,7 +18,13 @@ export default {
     components: {
         AppHeader,
         AppSidebar
-    }
+    },
+    data() {
+        return {
+            token: !!localStorage.token,
+        }
+    },
+
 };
 </script>
 

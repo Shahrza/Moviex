@@ -3,7 +3,7 @@
         <div id="video-logo-background">
             <router-link to="/" tag="a"
             ><h2 style="margin: 22px 20px">Moviex</h2>
-            </router-link >
+            </router-link>
         </div>
 
         <div id="video-search-header">
@@ -25,16 +25,23 @@
                                     <label class="checkbox-pro-container"
                                     >Movies
                                         <input
-                                            type="checkbox"
-                                            checked="checked"
+                                            checked
+                                            type="radio"
                                             id="movies-type"
+                                            name="movie-type"
+                                            value="movie"
                                         />
                                         <span class="checkmark-pro"></span>
                                     </label>
 
                                     <label class="checkbox-pro-container"
                                     >TV Series
-                                        <input type="checkbox" id="tv-type"/>
+                                        <input
+                                            type="radio"
+                                            id="tv-type"
+                                            name="movie-type"
+                                            value="tv"
+                                        />
                                         <span class="checkmark-pro"></span>
                                     </label>
                                 </div>
@@ -47,12 +54,13 @@
                         <!-- close .col -->
                         <div class="col-sm extra-padding">
                             <h5>Genres:</h5>
-                            <select class="custom-select" v-model="genre">
+                            <select class="custom-select" v-model="genreId">
                                 <option
                                     v-for="(genre, index) in genres"
                                     :key="index"
+                                    :value="genre.id"
                                 >
-                                    {{ genre.name }}
+                                    {{genre.name}}
                                 </option>
                             </select>
                             <div class="dotted-dividers-pro"></div>
@@ -72,7 +80,7 @@
                         <a href="#" @click="select" class="btn btn-green-pro"
                         >Filter Search</a
                         >
-                        <a href="#!" class="btn">Reset</a>
+                        <a @click="reset" class="btn">Reset</a>
                     </div>
                     <!-- close #video-search-header-buttons -->
                 </form>
@@ -88,11 +96,8 @@
 
         <div id="header-user-profile">
             <div id="header-user-profile-click" class="noselect">
-                <img
-                    src="../../static/images/demo/user-profile.jpg"
-                    alt="Suzie"
-                />
-                <div id="header-username">Suzie Smith</div>
+                <i class="fas fa-user mr-1 mt-1" style="font-size: 20px" ></i>
+                <div id="header-username">John Doe</div>
                 <i class="fas fa-angle-down"></i>
             </div>
             <!-- close #header-user-profile-click -->
@@ -105,19 +110,7 @@
                     </li>
                     <li>
                         <a href="dashboard-favorites.html"
-                        ><span class="icon-Favorite-Window"></span>My
-                            Favorites</a
-                        >
-                    </li>
-                    <li>
-                        <a href="dashboard-account.html"
-                        ><span class="icon-Gears"></span>Account Details</a
-                        >
-                    </li>
-                    <li>
-                        <a href="#!"
-                        ><span class="icon-Life-Safer"></span
-                        >Help/Support</a
+                        ><span class="icon-Favorite-Window"></span>My Favorites</a
                         >
                     </li>
                     <li>
@@ -194,54 +187,48 @@
 
     export default {
         name: "Header",
-        components: {
-        },
+        components: {},
         data() {
             return {
                 key: '2fcb73980db9cd248599953a2855498b',
                 page: '',
                 genres: [],
                 genre: null,
-                genreId: null,
-                year: null,
+                genreId: '',
+                year: '',
+                link: null,
                 search: '',
             };
         },
         methods: {
             select() {
-                for (let i = 0; i < this.genres.length; i++) {
-                    if (this.genre === this.genres[i].name) {
-                        this.genreId = this.genres[i].id;
-                        bus.$emit("genreId", this.genreId);
-                    }
-                }
+                bus.$emit("genreId", this.genreId);
                 bus.$emit("year", this.year);
-
             },
+
+            reset() {
+                window.location.reload()
+            }
 
         },
         watch: {
             'search': (data) => {
                 bus.$emit('search', data)
             },
-            '$route': (data) => {
-                this.page = data.path
+            '$route': function(data){
+                if (data.path === "/tv-series") {
+                    this.page = "https://api.themoviedb.org/3/genre/tv/list?api_key=";
+                } else if (data.path === "/") {
+                    this.page = "https://api.themoviedb.org/3/genre/movie/list?api_key=";
+                }
+
+                axios.get(this.page + this.key + "&language=en-US")
+                    .then(res => {
+                    this.genres = res.data.genres;
+                });
             }
         },
-        mounted() {
-            let link;
-            console.log(this.page)
-            if (this.page == "/tv-series") {
-                link = "https://api.themoviedb.org/3/genre/tv/list?api_key=";
-            } else if (this.page == "/") {
-                link = "https://api.themoviedb.org/3/genre/movie/list?api_key=";
-            }
-
-            return axios.get(link + this.key + "&language=en-US").then(res => {
-                this.genres = res.data.genres;
-            });
-        }
     };
 </script>
 
-<style></style>
+<style scoped></style>

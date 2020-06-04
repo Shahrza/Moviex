@@ -1,7 +1,7 @@
 <template>
     <div class="col-12 col-md-6 col-lg-4 col-xl-3">
         <div class="item-listing-container-skrn card-hover">
-            <a><img :src="image" alt="Listing"/></a>
+            <img @click="overview" :src="image" alt="Listing"/>
             <div class="item-listing-text-skrn">
                 <div class="item-listing-text-skrn-vertical-align">
                     <h6>
@@ -17,8 +17,8 @@
                         data-empty-fill="#def6de"
                         data-reverse="true"
                     >
-                        <canvas width="32" height="32"></canvas>
-                        <span style="color:#42b740;" v-text="imdb"></span>
+                        <a><i class="fa fa-heart" style="color: #ff0000;font-size: 20px; margin: 5px 0px 0 0;"></i></a>
+                        <span style="color:#42b740;margin-left: 20px" v-text="imdb"></span>
                     </div>
                 </div>
                 <!-- close .item-listing-text-skrn-vertical-align -->
@@ -30,9 +30,17 @@
 </template>
 
 <script>
-export default {
-    props: ["image", "name", "imdb"]
+    import bus from "../main";
+
+    export default {
+    props: ["image", "name", "imdb"],
+    methods: {
+        overview() {
+            bus.$emit('overview', true)
+        }
+    }
 };
+
 </script>
 
 <style scoped>

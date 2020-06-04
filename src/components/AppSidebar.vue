@@ -15,10 +15,10 @@
                 </router-link>
             </li>
             <li class="normal-item-pro">
-                <a href="dashboard-new-arrivals.html">
+                <router-link to="/favorites" tag="a">
                     <span class="icon-Favorite-Window"></span>My
                     Favorites
-                </a>
+                </router-link>
             </li>
         </ul>
         <div class="clearfix"></div>

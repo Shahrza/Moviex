@@ -21,6 +21,7 @@
 
             <div class="row">
                 <MovieCard
+                    v-show="!cantFound"
                     @click.native="overviewMovie(movie)"
                     v-for="(movie, index) in movies"
                     :key="index"
@@ -34,10 +35,11 @@
                     :imdb="movie.vote_average"
                 />
 
-                <!-- <h3 class="ml-3" v-if="cantFound">No results found for "{{ searchInput }}"</h3>-->
+                <h3 class="ml-3" v-show="cantFound">No results found for "{{ searchInput }}"</h3>
             </div>
 
             <paginate
+                v-if="!cantFound"
                 :page-count="page.allPage"
                 :page-range="4"
                 :click-handler="pagination"
@@ -74,6 +76,7 @@
                 cantFound: false,
                 searchInput: null,
                 year: '',
+                card: false,
                 page: {
                     ulClass: "page-numbers",
                     activePage: "current",
@@ -90,9 +93,10 @@
                 return axios(`https://api.themoviedb.org/3/discover/movie?api_key=${this.key}&year=${this.year}&with_genres=${this.withGenre}&page=`
                     + (query.page ? query.page : 1))
                     .then(res => {
-                        this.movies = res.data.results
+                        this.movies = res.data.results;
                         this.page.allPage = res.data.total_pages;
                     })
+                    .catch(err => console.log(err))
             },
 
             getGenreList() {
@@ -102,11 +106,14 @@
                     )
                     .then(res => {
                         this.genres = res.data.genres;
-                    });
+                    })
+                    .catch(err => console.log(err))
             },
 
             overviewMovie(data) {
-                this.$router.push({name: 'Overview', params: {id: data.id}})
+                if (this.card) {
+                    this.$router.push({name: 'Overview', params: {id: data.id}})
+                }
             },
 
             changeGenre(genreId, genreName) {
@@ -116,6 +123,10 @@
             }
         },
         mounted() {
+            bus.$on('overview', data => {
+                this.card = data
+            })
+
 
             bus.$on("year", data => {
                 this.year = parseInt(data);
@@ -126,20 +137,22 @@
                 this.withGenre = data;
                 this.getList()
             });
+
             bus.$on('search', data => {
                 this.searchInput = data;
                 if (data) {
-                    return axios(
+                     axios(
                         `https://api.themoviedb.org/3/search/movie?api_key=${this.key}&language=en-US&query=${data}&page=1&include_adult=false`
                     ).then(res => {
                         if (!res.data.results.length) {
-                            return this.cantFound = true
+                            this.cantFound = true
                         }
                         this.movies = res.data.results;
 
                     }).catch(err => console.log(err))
 
                 } else if (data === '' || !data) {
+                    this.cantFound = false;
                     this.getList()
                 }
             });

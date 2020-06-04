@@ -34,10 +34,11 @@
                     :imdb="movie.vote_average"
                 />
 
-                <!-- <h3 class="ml-3" v-if="cantFound">No results found for "{{ searchInput }}"</h3>-->
+                 <h3 class="ml-3" v-if="cantFound">No results found for "{{ searchInput }}"</h3>
             </div>
 
             <paginate
+                v-if="!cantFound"
                 :page-count="page.allPage"
                 :page-range="4"
                 :click-handler="pagination"
@@ -87,7 +88,7 @@
             },
 
             getList(query = {}) {
-                return axios(`https://api.themoviedb.org/3/discover/tv?api_key=${this.key}&year=${this.year}&with_genres=${this.withGenre}&page=`
+                return axios(`https://api.themoviedb.org/3/discover/tv?api_key=${this.key}&first_air_date_year=${this.year}&with_genres=${this.withGenre}&page=`
                     + (query.page ? query.page : 1))
                     .then(res => {
                         this.movies = res.data.results
@@ -106,7 +107,6 @@
             },
 
             overviewMovie(data) {
-                console.log(data)
                 this.$router.push({name: 'Overview', params: {id: data.id}})
             },
 
@@ -130,17 +130,18 @@
             bus.$on('search', data => {
                 this.searchInput = data;
                 if (data) {
-                    return axios(
-                        `https://api.themoviedb.org/3/search/movie?api_key=${this.key}&language=en-US&query=${data}&page=1&include_adult=false`
+                     axios(
+                        `https://api.themoviedb.org/3/search/tv?api_key=${this.key}&language=en-US&query=${data}&page=1&include_adult=false`
                     ).then(res => {
                         if (!res.data.results.length) {
-                            return this.cantFound = true
+                             this.cantFound = true
                         }
                         this.movies = res.data.results;
 
                     }).catch(err => console.log(err))
 
                 } else if (data === '' || !data) {
+                    this.cantFound = false;
                     this.getList()
                 }
             });

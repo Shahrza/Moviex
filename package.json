@@ -15,7 +15,8 @@
     "vue": "^2.5.2",
     "vue-range-slider": "^0.6.0",
     "vue-router": "^3.0.1",
-    "vuejs-paginate": "^2.1.0"
+    "vuejs-paginate": "^2.1.0",
+    "vuelidate": "^0.7.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

@@ -121,7 +121,6 @@
             }
         },
         mounted() {
-            console.log(this.$route)
             axios(`https://api.themoviedb.org/3/movie/${this.$route.params.id}?api_key=${this.key}&language=en-US`)
                 .then(res => {
                     this.movie = res.data

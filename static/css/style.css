@@ -42,6 +42,11 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 /*
 =============================================== 01. FONT STYLES ===============================================
 */
+
+body{
+    overflow-x: hidden;
+}
+
 body,
 input,
 textarea,
@@ -800,13 +805,17 @@ ul.dashboard-genres-pro li h6 {
 .item-listing-text-skrn {
     padding: 0px 24px 0px 24px;
     height: 80px;
-    display: table;
+    display: flex;
+    justify-content: center;
+    align-content: center;
     width: 100%;
+    padding: 27px;
 }
 
 .item-listing-text-skrn-vertical-align {
-    display: table-cell;
-    vertical-align: middle;
+    display: flex;
+    justify-content: center;
+    align-content: center;
     width: 100%;
 }
 
@@ -2975,12 +2984,10 @@ h6.light-weight-heading {
 }
 
 .registration-social-login-container {
-    border-right: 1px solid #e4e4e4;
-    width: calc(100% - 270px);
+    width: 100%;
     float: left;
     position: relative;
     margin-bottom: 0px;
-    padding-right: 20px;
 }
 
 .registration-social-login-or {
@@ -3140,8 +3147,7 @@ a.not-a-member-pro span {
 }
 
 .modal-body-pro .registration-social-login-container {
-    width: calc(100% - 240px);
-    padding-right: 20px;
+    width: 100%;
 }
 
 .modal-body-pro .registration-social-login-or {
@@ -4725,7 +4731,6 @@ li.flex-active-slide.progression_studios_animate_right
 
     .modal-body-pro .registration-social-login-container,
     .registration-social-login-container {
-        border-right: 0px;
         width: 100%;
         padding-right: 0px;
     }
@@ -4933,7 +4938,6 @@ li.flex-active-slide.progression_studios_animate_right
 
     .modal-body-pro .registration-social-login-container,
     .registration-social-login-container {
-        border-right: 0px;
         width: 100%;
         padding-right: 0px;
     }
@@ -5165,3 +5169,4 @@ li.flex-active-slide.progression_studios_animate_right
         display: none;
     }
 }
+
