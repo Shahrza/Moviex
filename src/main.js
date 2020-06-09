@@ -6,6 +6,8 @@ import router from "./router";
 
 Vue.config.productionTip = false;
 
+window.$ = window.jQuery = require('jquery');
+
 const bus = new Vue();
 
 export default bus;

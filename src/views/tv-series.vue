@@ -20,18 +20,13 @@
             <h4 class="heading-extra-margin-bottom">{{ genreName }}</h4>
 
             <div class="row">
+
                 <MovieCard
+                    v-show="!cantFound"
                     @click.native="overviewMovie(movie)"
                     v-for="(movie, index) in movies"
                     :key="index"
-                    :image="
-                        movie.backdrop_path
-                            ? 'https://image.tmdb.org/t/p/w500/' +
-                              movie.backdrop_path
-                            : '../../static/images/unnamed.jpg'
-                    "
-                    :name="movie.name"
-                    :imdb="movie.vote_average"
+                    :item="movie"
                 />
 
                  <h3 class="ml-3" v-if="cantFound">No results found for "{{ searchInput }}"</h3>
@@ -87,17 +82,25 @@
                 this.getList({page});
             },
 
-            getList(query = {}) {
-                return axios(`https://api.themoviedb.org/3/discover/tv?api_key=${this.key}&first_air_date_year=${this.year}&with_genres=${this.withGenre}&page=`
+            getList: function (query = {}) {
+                axios(`https://api.themoviedb.org/3/discover/tv?api_key=${this.key}&first_air_date_year=${this.year}&with_genres=${this.withGenre}&page=`
                     + (query.page ? query.page : 1))
                     .then(res => {
-                        this.movies = res.data.results
+                        this.movies = res.data.results.map(function (item) {
+                            const favorites = localStorage.favorites ? JSON.parse(localStorage.favorites) : [];
+                            const isFavorite = favorites.find(i => parseInt(i.id) === parseInt(item.id));
+                            return {
+                                ...item,
+                                isFavorite: !!isFavorite
+                            }
+                        });
                         this.page.allPage = res.data.total_pages;
                     })
+                    .catch(err => console.log(err))
             },
 
             getGenreList() {
-                return axios
+                axios
                     .get(
                         `https://api.themoviedb.org/3/genre/tv/list?api_key=${this.key}&language=en-US`
                     )
@@ -107,7 +110,9 @@
             },
 
             overviewMovie(data) {
-                this.$router.push({name: 'Overview', params: {id: data.id}})
+                if (this.card) {
+                    this.$router.push({name: 'Overview', params: {id: data.id}})
+                }
             },
 
             changeGenre(genreId, genreName) {

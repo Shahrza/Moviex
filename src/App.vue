@@ -1,11 +1,17 @@
 <template>
     <div>
+
         <div v-if="token" id="sidebar-bg">
             <app-header />
             <app-sidebar />
+            <div>
+                <router-view />
+            </div>
+        </div>
+        <div v-else>
             <router-view />
         </div>
-        <router-view v-else></router-view>
+
     </div>
 
 </template>

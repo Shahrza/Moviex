@@ -104,17 +104,17 @@
             <div id="header-user-profile-menu">
                 <ul>
                     <li>
-                        <a href="dashboard-profile.html"
+                        <a
                         ><span class="icon-User"></span>My Profile</a
                         >
                     </li>
                     <li>
-                        <a href="dashboard-favorites.html"
-                        ><span class="icon-Favorite-Window"></span>My Favorites</a
+                        <router-link to="/favorites"
+                        ><span class="icon-Favorite-Window"></span>My Favorites</router-link
                         >
                     </li>
                     <li>
-                        <a href="index.html"
+                        <a style="cursor:pointer;" @click="logOut"
                         ><span class="icon-Power-3"></span>Log Out</a
                         >
                     </li>
@@ -208,6 +208,11 @@
 
             reset() {
                 window.location.reload()
+            },
+
+            logOut() {
+                localStorage.clear()
+                window.location.reload()
             }
 
         },
@@ -220,6 +225,8 @@
                     this.page = "https://api.themoviedb.org/3/genre/tv/list?api_key=";
                 } else if (data.path === "/") {
                     this.page = "https://api.themoviedb.org/3/genre/movie/list?api_key=";
+                } else {
+                    return
                 }
 
                 axios.get(this.page + this.key + "&language=en-US")

@@ -25,14 +25,7 @@
                     @click.native="overviewMovie(movie)"
                     v-for="(movie, index) in movies"
                     :key="index"
-                    :image="
-                        movie.backdrop_path
-                            ? 'https://image.tmdb.org/t/p/w500/' +
-                              movie.backdrop_path
-                            : '../../static/images/unnamed.jpg'
-                    "
-                    :name="movie.title"
-                    :imdb="movie.vote_average"
+                    :item="movie"
                 />
 
                 <h3 class="ml-3" v-show="cantFound">No results found for "{{ searchInput }}"</h3>
@@ -89,18 +82,25 @@
                 this.getList({page});
             },
 
-            getList(query = {}) {
-                return axios(`https://api.themoviedb.org/3/discover/movie?api_key=${this.key}&year=${this.year}&with_genres=${this.withGenre}&page=`
+            getList: function (query = {}) {
+                 axios(`https://api.themoviedb.org/3/discover/movie?api_key=${this.key}&year=${this.year}&with_genres=${this.withGenre}&page=`
                     + (query.page ? query.page : 1))
                     .then(res => {
-                        this.movies = res.data.results;
+                        this.movies = res.data.results.map(function (item) {
+                            const favorites = localStorage.favorites ? JSON.parse(localStorage.favorites) : [];
+                            const isFavorite = favorites.find(i => parseInt(i.id) === parseInt(item.id));
+                            return {
+                                ...item,
+                                isFavorite: !!isFavorite
+                            }
+                        });
                         this.page.allPage = res.data.total_pages;
                     })
                     .catch(err => console.log(err))
             },
 
             getGenreList() {
-                return axios
+                axios
                     .get(
                         `https://api.themoviedb.org/3/genre/movie/list?api_key=${this.key}&language=en-US`
                     )
@@ -126,7 +126,6 @@
             bus.$on('overview', data => {
                 this.card = data
             })
-
 
             bus.$on("year", data => {
                 this.year = parseInt(data);

@@ -10,23 +10,24 @@ const router = new Router({
     routes
 });
 
-// router.beforeEach((to, from, next) => {
-//     const token = !!localStorage.token;
-//
-//     if (token) {
-//         if (to.meta.token) {
-//             next();
-//         } else {
-//             next({path: 'Movies'})
-//         }
-//     } else {
-//         if (to.name === 'Login' || to.name === 'Register') {
-//             next()
-//         } else {
-//             next({name: 'Login'})
-//         }
-//     }
-// });
+router.beforeEach((to, from, next) => {
+    let token = !!localStorage.token;
+
+    if (token) {
+        if (to.name === 'Login' || to.name === 'Register') {
+            next('/');
+        }
+        else {
+            next();
+        }
+    } else {
+        if (to.name === 'Login' || to.name === 'Register') {
+            next()
+        } else {
+            next({name: 'Login'})
+        }
+    }
+});
 
 export default router
 
