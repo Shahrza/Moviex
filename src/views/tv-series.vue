@@ -69,6 +69,7 @@
                 genreName: 'Discover',
                 cantFound: false,
                 searchInput: null,
+                card: false,
                 year: '',
                 page: {
                     ulClass: "page-numbers",
@@ -111,7 +112,7 @@
 
             overviewMovie(data) {
                 if (this.card) {
-                    this.$router.push({name: 'Overview', params: {id: data.id}})
+                    this.$router.push({name: 'Overview', params: {id: data.id, route: 'tv'},})
                 }
             },
 
@@ -122,6 +123,9 @@
             }
         },
         mounted() {
+            bus.$on('overview', data => {
+                this.card = data
+            })
 
             bus.$on("year", data => {
                 this.year = parseInt(data);

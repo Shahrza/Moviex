@@ -37,48 +37,46 @@
             return {
                 key: '2fcb73980db9cd248599953a2855498b',
                 movies: [],
-                movieIds: [],
-                tvIds: [],
-                cantFound: false
+                cantFound: false,
+                card: false,
             }
         },
         methods: {
             overviewMovie(data) {
+                let route;
+                if(data.episode_run_time){
+                    route = 'tv'
+                } else {
+                    route = 'movie'
+                }
                 if (this.card) {
-                    this.$router.push({name: 'Overview', params: {id: data.id}})
+                    this.$router.push({name: 'Overview', params: {id: data.id, route: route}})
                 }
             },
         },
         mounted() {
+            bus.$on('overview', data => {
+                this.card = data
+            });
+
+
             let movieIds = JSON.parse(localStorage.getItem('favorites'))
-            let movieRoute = movieIds.map(data => data.route)
-            this.movieIds = movieIds.map(data => data.id)
 
-            for (let route of movieRoute) {
-                console.log(route)
-                if (route === "/") {
-                    for (let data of this.movieIds) {
-                         axios('https://api.themoviedb.org/3/movie/' + data + '?api_key=' + this.key + '&language=en-US')
-                            .then(res => {
-                                this.movies.push(res.data)
-                            }).catch(err => console.log(err))
-                    }
-                } else if (route === "/tv-series") {
-                    for (let data of this.movieIds) {
-                         axios('https://api.themoviedb.org/3/tv/' + data + '?api_key=' + this.key + '&language=en-US')
-                            .then(res => {
-                                this.movies.push(res.data)
-                            }).catch(err => console.log(err))
-                    }
-
-                } else {
-                    console.log('no')
+            for (let data of movieIds) {
+                if (data.route === '/') {
+                    axios('https://api.themoviedb.org/3/movie/' + data.id + '?api_key=' + this.key + '&language=en-US')
+                        .then(res => {
+                            this.movies.push(res.data)
+                        }).catch(err => console.log(err))
+                } else if (data.route === '/tv-series') {
+                    axios('https://api.themoviedb.org/3/tv/' + data.id + '?api_key=' + this.key + '&language=en-US')
+                        .then(res => {
+                            this.movies.push(res.data)
+                        }).catch(err => console.log(err))
                 }
             }
 
-
         }
-
     }
 </script>
 

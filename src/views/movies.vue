@@ -17,6 +17,16 @@
         <div class="clearfix"></div>
 
         <div class="dashboard-container">
+            <div
+                class="circle-rating-pro"
+                data-value="0.86"
+                data-animation-start-value="0.86"
+                data-size="32"
+                data-thickness="3"
+                data-fill='{"color": "#42b740"}'
+                data-empty-fill="#def6de"
+                data-reverse="true"
+            ></div>
             <h4 class="heading-extra-margin-bottom">{{ genreName }}</h4>
 
             <div class="row">
@@ -112,7 +122,7 @@
 
             overviewMovie(data) {
                 if (this.card) {
-                    this.$router.push({name: 'Overview', params: {id: data.id}})
+                    this.$router.push({name: 'Overview', params: {id: data.id, route: 'movie'}})
                 }
             },
 

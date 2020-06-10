@@ -3,7 +3,7 @@
         <div id="content-sidebar-pro">
 
             <div class="content-sidebar-section">
-                <h2 class="content-sidebar-sub-header">{{ movie.title }}</h2>
+                <h2 class="content-sidebar-sub-header">{{ movie.title || movie.name }}</h2>
                 <ul class="progression-studios-slider-rating">
                     <li>PG-13</li>
                     <li>HD</li>
@@ -12,12 +12,12 @@
 
             <div class="content-sidebar-section">
                 <h4 class="content-sidebar-sub-header">Release Date</h4>
-                <div class="content-sidebar-short-description">{{ movie.release_date }}</div>
+                <div class="content-sidebar-short-description">{{ movie.release_date || movie.first_air_date }}</div>
             </div><!-- close .content-sidebar-section -->
 
             <div class="content-sidebar-section">
                 <h4 class="content-sidebar-sub-header">Length</h4>
-                <div class="content-sidebar-short-description">{{ movie.runtime }} min</div>
+                <div class="content-sidebar-short-description">{{ movie.runtime ? movie.runtime : movie.episode_run_time }} min</div>
             </div><!-- close .content-sidebar-section -->
 
             <div class="content-sidebar-section">
@@ -31,7 +31,7 @@
             </div><!-- close .content-sidebar-section -->
 
             <div class="content-sidebar-section">
-                <h4 class="content-sidebar-sub-header">Budget</h4>
+                <h4 class="content-sidebar-sub-header">Revenue</h4>
                 <div class="content-sidebar-short-description">{{ movie.revenue }}$</div>
             </div><!-- close .content-sidebar-section -->
 
@@ -117,14 +117,22 @@
         data() {
             return {
                 key: '2fcb73980db9cd248599953a2855498b',
-                movie: {}
+                movie: {},
             }
         },
         mounted() {
-            axios(`https://api.themoviedb.org/3/movie/${this.$route.params.id}?api_key=${this.key}&language=en-US`)
-                .then(res => {
-                    this.movie = res.data
-                }).catch(err => console.log(err))
+            if(this.$route.params.route === 'movie'){
+                axios(`https://api.themoviedb.org/3/movie/${this.$route.params.id}?api_key=${this.key}&language=en-US`)
+                    .then(res => {
+                        this.movie = res.data
+                    }).catch(err => console.log(err))
+            } else if (this.$route.params.route === 'tv') {
+                axios(`https://api.themoviedb.org/3/tv/${this.$route.params.id}?api_key=${this.key}&language=en-US`)
+                    .then(res => {
+                        this.movie = res.data
+                    }).catch(err => console.log(err))
+            }
+
         },
 
     }

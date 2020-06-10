@@ -22,7 +22,8 @@
                         <a><i v-if="$route.path !== '/favorites'" @click="addFavourite(item.id, $event)" :data-type="item.isFavorite ? 'remove' : 'add'"
                               :class="item.isFavorite ? 'fa fa-heart' : 'far fa-heart'"
                               style="color: #ff0000;font-size: 20px; margin: 5px 0px 0 0;"></i></a>
-                        <span :class="$route.path == '/favorites' ? 'ml-0' : ''" style="color:#42b740;margin-left: 20px" v-text="item.vote_average"></span>
+                        <span :class="$route.path === '/favorites' ? 'ml-0' : ''" style="color:#42b740;margin-left: 20px" v-text="item.vote_average"></span>
+                        <img @click="deleteFavorite(item.id)" v-if="this.$route.path === '/favorites'" style="width: 20px;height: 30px; margin-left: 40px; color: red" src="../../static/images/trash.svg" alt="">
                     </div>
                 </div>
                 <!-- close .item-listing-text-skrn-vertical-align -->
@@ -35,6 +36,7 @@
 
 <script>
     import bus from "../main";
+    import Swal from'sweetalert2'
 
     export default {
         props: {
@@ -49,6 +51,26 @@
         methods: {
             overview() {
                 bus.$emit('overview', true)
+            },
+
+            deleteFavorite(data){
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.value) {
+                        const favorites = JSON.parse(localStorage.getItem('favorites'));
+                        const filtered = favorites.filter(fav => fav.id !== data);
+                        localStorage.setItem('favorites', JSON.stringify(filtered));
+                        window.location.reload()
+                    }
+                })
+
             },
 
             addFavourite(id, event) {
