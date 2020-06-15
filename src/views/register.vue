@@ -39,6 +39,10 @@
                                     <div class="form-error" v-if="!$v.form.password.required"
                                          v-text="'Please enter password'"></div>
                                 </div>
+                                <div v-if="$v.form.password.$error">
+                                    <div class="form-error" v-if="!$v.form.password.minLength"
+                                         v-text="'Password has to to be at least 6 character'"></div>
+                                </div>
                             </div>
 
                             <div class="col">
@@ -48,6 +52,8 @@
                                 <div v-if="$v.form.confirmPassword.$error">
                                     <div class="form-error" v-if="!$v.form.confirmPassword.required"
                                          v-text="'Please enter confirm password'"></div>
+                                    <div class="form-error" v-if="!$v.form.confirmPassword.sameAs"
+                                         v-text="'Password is not same'"></div>
                                 </div>
                             </div>
                         </div>
@@ -74,6 +80,7 @@
             return {
                 form: {
                     fullName: '',
+                    email: '',
                     password: '',
                     confirmPassword: ''
                 }
@@ -105,7 +112,7 @@
                     localStorage.token = Math.random();
                     this.$router.push({path: '/'});
                     window.location.reload();
-                }
+                } 
             }
         }
     }

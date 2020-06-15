@@ -1,7 +1,7 @@
 <template>
     <div class="col-12 col-md-6 col-lg-4 col-xl-3">
         <div class="item-listing-container-skrn card-hover">
-            <img @click="overview" :src="item.backdrop_path ? 'https://image.tmdb.org/t/p/w500/' +
+            <img @click="overview(item)" :src="item.backdrop_path ? 'https://image.tmdb.org/t/p/w500/' +
                               item.backdrop_path
                             : '../../static/images/unnamed.jpg'" alt="Listing"/>
             <div class="item-listing-text-skrn">
@@ -40,6 +40,7 @@
 
     export default {
         props: {
+            route: null,
             item: {
                 required: true,
                 type: Object,
@@ -49,8 +50,8 @@
             return {}
         },
         methods: {
-            overview() {
-                bus.$emit('overview', true)
+            overview(item) {
+                this.$router.push({name: 'Overview', params: {id: item.id}, query: {route: this.route}});
             },
 
             deleteFavorite(data){

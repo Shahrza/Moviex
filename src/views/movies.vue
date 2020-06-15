@@ -36,6 +36,7 @@
                     v-for="(movie, index) in movies"
                     :key="index"
                     :item="movie"
+                    route="movie"
                 />
 
                 <h3 class="ml-3" v-show="cantFound">No results found for "{{ searchInput }}"</h3>
@@ -133,10 +134,6 @@
             }
         },
         mounted() {
-            bus.$on('overview', data => {
-                this.card = data
-            })
-
             bus.$on("year", data => {
                 this.year = parseInt(data);
                 this.getList()

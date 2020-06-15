@@ -12,27 +12,25 @@
                         <div class="form-group">
                             <input v-model.lazy="$v.form.email.$model" type="text" class="form-control" id="username"
                                    placeholder="Username">
-                            <div class="form-error" v-if="!$v.form.email.required"
-                                 v-text="'Please enter your email'"></div>
-                            <div class="form-error" v-if="!$v.form.email.email"
-                                 v-text="'Email is not valid'"></div>
+                            <div v-if="$v.form.password.$error">
+                                <div class="form-error" v-if="!$v.form.email.required"
+                                     v-text="'Please enter your email'"></div>
+                                <div class="form-error" v-if="!$v.form.email.email"
+                                     v-text="'Email is not valid'"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <input v-model.lazy="$v.form.password.$model" type="password" class="form-control" id="password"
                                    placeholder="Password">
-                            <div class="form-error" v-if="!$v.form.password.required"
-                                 v-text="'Please enter your password'"></div>
+                            <div v-if="$v.form.password.$error">
+                                <div class="form-error" v-if="!$v.form.password.required"
+                                     v-text="'Please enter your password'"></div>
+                            </div>
+
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-green-pro btn-display-block">Sign In</button>
                         </div>
-                        <!--                            <div class="container-fluid">-->
-                        <!--                                <div class="row no-gutters">-->
-                        <!--                                    <div class="col checkbox-remember-pro"><input type="checkbox" id="checkbox-remember"><label for="checkbox-remember" class="col-form-label">Remember me</label></div>-->
-                        <!--                                    <div class="col forgot-your-password"><a href="#!">Forgot your password?</a></div>-->
-                        <!--                                </div>-->
-                        <!--                            </div>&lt;!&ndash; close .container-fluid &ndash;&gt;-->
-
                     </form>
 
                 </div><!-- close .registration-social-login-container -->

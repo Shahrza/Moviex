@@ -11,7 +11,7 @@ export default [
         component: () => import("../views/tv-series")
     },
     {
-        path: "/overview",
+        path: "/overview/:id",
         name: "Overview",
         component: () => import("../views/overview")
     },

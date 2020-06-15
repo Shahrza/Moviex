@@ -121,12 +121,12 @@
             }
         },
         mounted() {
-            if(this.$route.params.route === 'movie'){
+            if(this.$route.query.route === 'movie'){
                 axios(`https://api.themoviedb.org/3/movie/${this.$route.params.id}?api_key=${this.key}&language=en-US`)
                     .then(res => {
                         this.movie = res.data
                     }).catch(err => console.log(err))
-            } else if (this.$route.params.route === 'tv') {
+            } else if (this.$route.query.route === 'tv') {
                 axios(`https://api.themoviedb.org/3/tv/${this.$route.params.id}?api_key=${this.key}&language=en-US`)
                     .then(res => {
                         this.movie = res.data
