@@ -109,7 +109,6 @@
 </template>
 
 <script>
-    import bus from "../main";
     import axios from "axios";
 
     export default {

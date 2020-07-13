@@ -17,40 +17,6 @@
             <div id="video-search-header-filtering">
                 <form id="video-search-header-filtering-padding">
                     <div class="row">
-                        <div class="col-sm extra-padding">
-                            <h5>Type:</h5>
-
-                            <div class="row">
-                                <div class="col-sm">
-                                    <label class="checkbox-pro-container"
-                                    >Movies
-                                        <input
-                                            checked
-                                            type="radio"
-                                            id="movies-type"
-                                            name="movie-type"
-                                            value="movie"
-                                        />
-                                        <span class="checkmark-pro"></span>
-                                    </label>
-
-                                    <label class="checkbox-pro-container"
-                                    >TV Series
-                                        <input
-                                            type="radio"
-                                            id="tv-type"
-                                            name="movie-type"
-                                            value="tv"
-                                        />
-                                        <span class="checkmark-pro"></span>
-                                    </label>
-                                </div>
-                                <!-- close .col -->
-                            </div>
-                            <!-- close .row -->
-
-                            <div class="dotted-dividers-pro"></div>
-                        </div>
                         <!-- close .col -->
                         <div class="col-sm extra-padding">
                             <h5>Genres:</h5>
@@ -69,7 +35,7 @@
                         <div class="col-sm extra-padding">
                             <h5>Year:</h5>
                             <select class="custom-select" v-model="year">
-                                <option v-for="year in 125" :value="year+1899">{{year+1899}}</option>
+                                <option v-for="year in 83" :value="year+1939">{{year+1939}}</option>
                             </select>
                             <div class="dotted-dividers-pro"></div>
                         </div>
@@ -80,7 +46,7 @@
                         <a href="#" @click="select" class="btn btn-green-pro"
                         >Filter Search</a
                         >
-                        <a @click="reset" class="btn">Reset</a>
+                        <a href="" @click="reset" class="btn">Reset</a>
                     </div>
                     <!-- close #video-search-header-buttons -->
                 </form>
@@ -89,102 +55,12 @@
             <!-- close #video-search-header-filtering -->
         </div>
         <!-- close .video-search-header -->
-
-        <div id="mobile-bars-icon-pro" class="noselect">
-            <i class="fas fa-bars"></i>
-        </div>
-
-        <div id="header-user-profile">
-            <div id="header-user-profile-click" class="noselect">
-                <i class="fas fa-user mr-1 mt-1" style="font-size: 20px" ></i>
-                <div id="header-username">John Doe</div>
-                <i class="fas fa-angle-down"></i>
-            </div>
-            <!-- close #header-user-profile-click -->
-            <div id="header-user-profile-menu">
-                <ul>
-                    <li>
-                        <a
-                        ><span class="icon-User"></span>My Profile</a
-                        >
-                    </li>
-                    <li>
-                        <router-link to="/favorites"
-                        ><span class="icon-Favorite-Window"></span>My Favorites</router-link
-                        >
-                    </li>
-                    <li>
-                        <a style="cursor:pointer;" @click="logOut"
-                        ><span class="icon-Power-3"></span>Log Out</a
-                        >
-                    </li>
-                </ul>
-            </div>
-            <!-- close #header-user-profile-menu -->
-        </div>
-        <!-- close #header-user-profile -->
-
-        <div class="clearfix"></div>
-
-        <nav id="mobile-navigation-pro">
-            <ul id="mobile-menu-pro">
-                <li>
-                    <a href="dashboard-home.html">
-                        <span class="icon-Old-TV"></span>
-                        TV Series
-                    </a>
-                </li>
-
-                <li></li>
-                <li>
-                    <a href="dashboard-movies.html">
-                        <span class="icon-Reel"></span>
-                        Movies
-                    </a>
-                </li>
-                <li class="current-menu-item">
-                    <a href="dashboard-playlists.html">
-                        <span class="icon-Movie"></span>
-                        Playlists
-                    </a>
-                </li>
-                <li>
-                    <a href="dashboard-new-arrivals.html">
-                        <span class="icon-Movie-Ticket"></span>
-                        New Arrivals
-                    </a>
-                </li>
-                <li>
-                    <a href="dashboard-coming-soon.html">
-                        <span class="icon-Clock"></span>
-                        Coming Soon
-                    </a>
-                </li>
-                <li>
-                    <a href="#!">
-                        <i class="far fa-bell"></i>
-                        <span class="user-notification-count">3</span>
-                        Notifications
-                    </a>
-                </li>
-            </ul>
-            <div class="clearfix"></div>
-
-            <div id="search-mobile-nav-pro">
-                <input
-                    type="text"
-                    placeholder="Search for Movies or TV Series"
-                    aria-label="Search"
-                />
-            </div>
-        </nav>
     </header>
 </template>
 
 <script>
     import axios from "axios";
     import bus from "../main";
-
     export default {
         name: "Header",
         components: {},
@@ -205,16 +81,9 @@
                 bus.$emit("genreId", this.genreId);
                 bus.$emit("year", this.year);
             },
-
             reset() {
                 window.location.reload()
             },
-
-            logOut() {
-                localStorage.clear()
-                window.location.reload()
-            }
-
         },
         watch: {
             'search': (data) => {
@@ -228,11 +97,10 @@
                 } else {
                     return
                 }
-
                 axios.get(this.page + this.key + "&language=en-US")
                     .then(res => {
-                    this.genres = res.data.genres;
-                });
+                        this.genres = res.data.genres;
+                    });
             }
         },
     };

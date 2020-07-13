@@ -1,4 +1,3 @@
-
 export default [
     {
         path: "/",
@@ -19,15 +18,5 @@ export default [
         path: "/favorites",
         name: "Favorites",
         component: () => import("../views/favorites")
-    },
-    {
-        path: "/login",
-        name: "Login",
-        component: () => import("../views/login")
-    },
-    {
-        path: "/register",
-        name: "Register",
-        component: () => import("../views/register")
     },
 ]

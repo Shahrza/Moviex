@@ -1539,8 +1539,7 @@ span.user-notification-count {
 
 /* Search Filtering Buttons */
 #video-search-header-buttons {
-    text-align: center;
-    padding: 30px 0px 40px;
+    padding: 30px 0px 40px 14px;
 }
 
 #video-search-header-buttons .btn {

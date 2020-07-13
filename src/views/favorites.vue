@@ -6,8 +6,10 @@
 
             <div class="row">
 
+                <h3 class="text-secondary pt-5 pl-3"  v-if="!movies.length">Your list is empty. Explore more and pick your favourites!</h3>
+
                 <MovieCard
-                    v-show="!cantFound"
+                    v-if="!cantFound"
                     @click.native="overviewMovie(movie)"
                     v-for="(movie, index) in movies"
                     :key="index"
@@ -15,7 +17,6 @@
                 />
 
             </div>
-
         </div>
     </main>
 </template>
