@@ -36,7 +36,7 @@
         },
         data() {
             return {
-                key: '2fcb73980db9cd248599953a2855498b',
+                key: 'YOUR_KEY',
                 movies: [],
                 cantFound: false,
                 card: false,
